@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Comment Pro - Professional Comment Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Global Header with Hamburger Menu and Theme Toggle -->
+    <header class="global-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" onclick="toggleMenu()" title="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="logo-mini">
+                    <i class="fas fa-comments"></i>
+                    <span>Comment Pro</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn notification-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="theme-toggle icon-btn" onclick="toggleTheme()" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="notification-modal" onclick="closeNotificationModal(event)">
+        <div class="notification-container" onclick="event.stopPropagation()">
+            <div class="notification-header">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <button class="close-notification-btn" onclick="closeNotificationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="notifications-list" id="notificationsList">
+                <!-- Notifications will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Navigation Menu -->
+    <nav class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Navigation</h3>
+            <button class="close-menu-btn" onclick="toggleMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="menu-list">
+            <li><a href="#" onclick="goHome(); closeMenu();"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="showFeature('chatbot'); closeMenu();"><i class="fas fa-robot"></i> Chatbot</a></li>
+            <li><a href="#" onclick="showFeature('whatsnew'); closeMenu();"><i class="fas fa-star"></i> What's New</a></li>
+            <li><a href="#" onclick="showFeature('contact'); closeMenu();"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            <li><a href="#" onclick="showSettings(); closeMenu();"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><hr></li>
+            <li><a href="#" onclick="goToAdminLogin(); closeMenu();"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+            <li><a href="#" onclick="goToUserLogin(); closeMenu();"><i class="fas fa-user"></i> User Access</a></li>
+        </ul>
+    </nav>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+    <!-- Settings Page -->
+    <div id="settingsPage" class="page-container feature-page" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="feature-container">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="feature-card-large">
+                <div class="feature-icon"><i class="fas fa-cog"></i></div>
+                <h2>Settings</h2>
+                <div class="settings-container">
+                    <!-- Sound Effects Setting -->
+                    <div class="settings-item">
+                        <div class="settings-header">
+                            <div class="settings-title">
+                                <i class="fas fa-volume-up"></i>
+                                <span>Sound Effects</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="soundEffectsToggle" checked onchange="toggleSoundEffects()"/>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p class="settings-description">Enable or disable notification sounds</p>
+                    </div>
+
+                    <!-- Vibration Setting -->
+                    <div class="settings-item">
+                        <div class="settings-header">
+                            <div class="settings-title">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Vibration</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="vibrationToggle" checked onchange="toggleVibration()"/>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p class="settings-description">Enable or disable vibration feedback</p>
+                    </div>
+
+                    <!-- Auto Copy Setting -->
+                    <div class="settings-item">
+                        <div class="settings-header">
+                            <div class="settings-title">
+                                <i class="fas fa-copy"></i>
+                                <span>Auto Copy Notifications</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoCopyToggle" checked onchange="toggleAutoCopyNotif()"/>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p class="settings-description">Show notification when comments are copied</p>
+                    </div>
+
+                    <!-- Dark Mode Setting -->
+                    <div class="settings-item">
+                        <div class="settings-header">
+                            <div class="settings-title">
+                                <i class="fas fa-moon"></i>
+                                <span>Dark Mode</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle" checked onchange="toggleDarkModeSetting()"/>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p class="settings-description">Use dark theme for better visibility</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="page-container">
+        <div class="animated-bg"></div>
+        <div class="home-content">
+            <div class="logo-section">
+                <i class="fas fa-comments"></i>
+                <h1>Comment Pro</h1>
+                <p class="subtitle">Professional Comment Management System</p>
+            </div>
+            <p class="tagline">Powerful, Secure, Easy to Use</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-arrow-up"></i>
+                    <h3>Bulk Upload</h3>
+                    <p>Add multiple comments at once</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-lock"></i>
+                    <h3>Secure Access</h3>
+                    <p>Admin Panel with OTP System</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-hand-pointer"></i>
+                    <h3>Easy Selection</h3>
+                    <p>Select comments and copy all you need</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-hourglass-end"></i>
+                    <h3>Auto Removal</h3>
+                    <p>Comments removed after 2 minutes</p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-lg" onclick="goToAdminLogin()">
+                    <i class="fas fa-user-shield"></i> Admin Panel
+                </button>
+                <button class="btn btn-outline-primary btn-lg" onclick="goToUserLogin()">
+                    <i class="fas fa-user"></i> User Access
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Feature Page -->
+    <div id="chatbotPage" class="page-container feature-page" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="feature-container">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="feature-card-large">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h2>AI Chatbot Assistant</h2>
+                <p>Coming Soon - Get instant help with your comment management needs</p>
+                <div class="chat-demo">
+                    <div class="chat-bubble bot">Hello! How can I assist you today?</div>
+                    <div class="chat-bubble user">How do I bulk upload comments?</div>
+                    <div class="chat-bubble bot">Navigate to Admin Panel → Comments tab, select your application, and paste comments one per line!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What's New Feature Page -->
+    <div id="whatsnewPage" class="page-container feature-page" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="feature-container">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="feature-card-large">
+                <div class="feature-icon"><i class="fas fa-star"></i></div>
+                <h2>What's New</h2>
+                <div class="updates-list">
+                    <div class="update-item">
+                        <span class="badge new-badge">NEW</span>
+                        <h4>History Tracking</h4>
+                        <p>Track all your comment copy activities with timestamps</p>
+                    </div>
+                    <div class="update-item">
+                        <span class="badge new-badge">NEW</span>
+                        <h4>User Settings Panel</h4>
+                        <p>Customize sound effects, vibration, and more</p>
+                    </div>
+                    <div class="update-item">
+                        <span class="badge improved-badge">IMPROVED</span>
+                        <h4>Enhanced Dark Mode</h4>
+                        <p>Beautiful theme toggle for comfortable viewing in any lighting</p>
+                    </div>
+                    <div class="update-item">
+                        <span class="badge improved-badge">IMPROVED</span>
+                        <h4>Admin Dashboard</h4>
+                        <p>View complete user activity history</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Feature Page -->
+    <div id="contactPage" class="page-container feature-page" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="feature-container">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="feature-card-large">
+                <div class="feature-icon"><i class="fas fa-envelope"></i></div>
+                <h2>Contact Us</h2>
+                <div class="contact-options">
+                    <div class="contact-method">
+                        <div class="contact-icon"><i class="fab fa-telegram"></i></div>
+                        <h4>Telegram</h4>
+                        <p>Message us on Telegram for quick support</p>
+                        <a href="https://t.me/your_telegram_handle" class="btn btn-sm btn-primary" target="_blank">
+                            <i class="fab fa-telegram"></i> Contact on Telegram
+                        </a>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                        <h4>WhatsApp</h4>
+                        <p>Chat with us on WhatsApp for instant help</p>
+                        <a href="https://wa.me/1234567890" class="btn btn-sm btn-success" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <hr style="margin: 25px 0; opacity: 0.3;"/>
+                <h5 style="text-align: center; margin-bottom: 20px;">Or Send us an Email</h5>
+                <form class="contact-form" onsubmit="handleContactForm(event)">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" placeholder="Your name" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" placeholder="your@email.com" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea class="form-control" rows="4" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Page -->
+    <div id="adminLoginPage" class="page-container" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <i class="fas fa-user-shield"></i>
+                    <h2>Admin Login</h2>
+                </div>
+                <form onsubmit="adminLogin(event)">
+                    <div class="form-group">
+                        <label for="adminUsername">Username</label>
+                        <input type="text" id="adminUsername" class="form-control" placeholder="Enter admin username" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" class="form-control" placeholder="Enter admin password" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login to Admin Panel</button>
+                </form>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="goHome()">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin OTP Verification Page -->
+    <div id="adminOtpPage" class="page-container" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>Verify OTP</h2>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">
+                    A 6-digit OTP has been sent to your Telegram bot
+                </p>
+                <form onsubmit="verifyAdminOtp(event)">
+                    <div class="form-group">
+                        <label for="adminOtpInput">Enter 6-Digit OTP</label>
+                        <input type="text" id="adminOtpInput" class="form-control" placeholder="000000" maxlength="6" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+                </form>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="adminOtpCancel()">Cancel</button>
+                <p style="text-align: center; color: var(--text-muted); margin-top: 15px; font-size: 12px;">
+                    Didn't receive OTP? Check your Telegram bot
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="page-container" style="display:none;">
+        <div class="admin-header">
+            <div class="admin-header-content">
+                <div>
+                    <i class="fas fa-user-shield"></i>
+                    <h2>Admin Dashboard</h2>
+                </div>
+                <div>
+                    <button class="btn btn-danger btn-sm" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-container">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchAdminTab(event,'applications')">
+                    <i class="fas fa-mobile-alt"></i> Applications
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab(event,'comments')">
+                    <i class="fas fa-comments"></i> Comments
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab(event,'accessCodes')">
+                    <i class="fas fa-key"></i> Access Codes
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab(event,'userPasswords')">
+                    <i class="fas fa-lock"></i> User Passwords
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab(event,'userHistory')">
+                    <i class="fas fa-history"></i> User History
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab(event,'adminProfile')">
+                    <i class="fas fa-user-circle"></i> My Profile
+                </button>
+            </div>
+
+            <div id="applicationsTab" class="admin-tab-content active">
+                <div class="section-card">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Application</h3>
+                    <div class="form-group">
+                        <input type="text" id="appNameInput" class="form-control" placeholder="Application name (e.g., Instagram, Facebook)"/>
+                    </div>
+                    <button class="btn btn-success" onclick="addApplication()">
+                        <i class="fas fa-plus"></i> Add Application
+                    </button>
+                </div>
+
+                <div class="section-card">
+                    <h3><i class="fas fa-list"></i> Existing Applications</h3>
+                    <div id="applicationsList" class="apps-list"></div>
+                </div>
+            </div>
+
+            <div id="commentsTab" class="admin-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-comments"></i> Add Comments to Application</h3>
+                    <div class="form-group">
+                        <label>Select Application</label>
+                        <select id="appSelectForComments" class="form-control">
+                            <option value="">Choose an application...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Paste Comments (one per line)</label>
+                        <textarea id="commentsTextarea" class="form-control" rows="6" placeholder="Paste comments here&#10;One comment per line"></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="addComments()">
+                        <i class="fas fa-plus"></i> Add Comments
+                    </button>
+                </div>
+            </div>
+
+            <div id="accessCodesTab" class="admin-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-key"></i> Access Code Information</h3>
+                    <div class="info-box">
+                        <p><strong>Fixed Access Code:</strong></p>
+                        <div class="code-display" id="accessCodeDisplay">COMMENT-2025-SECURE</div>
+                        <p class="mt-3"><strong>Note:</strong> This access code is shared by all 50 users. Each user has their unique password.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userPasswordsTab" class="admin-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-lock"></i> Manage User Passwords</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Edit or reset passwords for all 50 users. Users use their password along with the fixed access code to login.
+                    </p>
+                    <div class="form-group">
+                        <input type="text" id="passwordSearchInput" class="form-control" placeholder="Search passwords..." onkeyup="filterPasswords()"/>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn btn-warning" onclick="resetAllPasswords()">
+                            <i class="fas fa-redo"></i> Reset All Passwords to Default
+                        </button>
+                    </div>
+                    <div id="userPasswordsList" class="passwords-management-list"></div>
+                </div>
+            </div>
+
+            <div id="userHistoryTab" class="admin-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-history"></i> All Users Copy History</h3>
+                    <div class="history-controls">
+                        <input type="text" id="historySearchInput" class="form-control" placeholder="Search by username or application..." onkeyup="filterUserHistory()"/>
+                        <button class="btn btn-outline-secondary" onclick="exportUserHistory()">
+                            <i class="fas fa-download"></i> Export History
+                        </button>
+                        <button class="btn btn-danger" onclick="clearAllUserHistory()">
+                            <i class="fas fa-trash"></i> Clear All History
+                        </button>
+                    </div>
+                    <div id="userHistoryContainer" class="history-table-wrapper">
+                        <p style="text-align: center; color: var(--text-muted);">No history records found</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminProfileTab" class="admin-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-user-circle"></i> My Profile & Settings</h3>
+                    <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                        <p style="margin-bottom: 10px;"><strong>Current Username:</strong> <span id="currentAdminUsername" style="color: var(--accent);">-</span></p>
+                        <p style="margin: 0;"><strong>Admin ID:</strong> <span style="color: var(--accent);">ADMIN-001</span></p>
+                    </div>
+
+                    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                        <h4 style="margin-bottom: 20px;"><i class="fas fa-user"></i> Change Username</h4>
+                        <div class="form-group">
+                            <label for="newAdminUsername">New Username</label>
+                            <input type="text" id="newAdminUsername" class="form-control" placeholder="Enter new username"/>
+                        </div>
+                        <button class="btn btn-primary" onclick="changeAdminUsername()">
+                            <i class="fas fa-save"></i> Update Username
+                        </button>
+                    </div>
+
+                    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 20px;">
+                        <h4 style="margin-bottom: 20px;"><i class="fas fa-key"></i> Change Password</h4>
+                        <div class="form-group">
+                            <label for="currentAdminPassword">Current Password</label>
+                            <input type="password" id="currentAdminPassword" class="form-control" placeholder="Enter current password"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="newAdminPassword">New Password</label>
+                            <input type="password" id="newAdminPassword" class="form-control" placeholder="Enter new password"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmAdminPassword">Confirm New Password</label>
+                            <input type="password" id="confirmAdminPassword" class="form-control" placeholder="Confirm new password"/>
+                        </div>
+                        <button class="btn btn-primary" onclick="changeAdminPassword()">
+                            <i class="fas fa-save"></i> Update Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Login Page -->
+    <div id="userLoginPage" class="page-container" style="display:none;">
+        <div class="animated-bg"></div>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <i class="fas fa-user"></i>
+                    <h2>User Access</h2>
+                </div>
+                <form onsubmit="userLogin(event)">
+                    <div class="form-group">
+                        <label for="accessCode">Access Code</label>
+                        <input type="text" id="accessCode" class="form-control" placeholder="Enter access code" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Password</label>
+                        <input type="password" id="userPassword" class="form-control" placeholder="Enter password" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Access Dashboard</button>
+                </form>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="goHome()">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="page-container" style="display:none;">
+        <div class="user-header">
+            <div class="user-header-content">
+                <div>
+                    <i class="fas fa-user"></i>
+                    <h2>User Dashboard</h2>
+                </div>
+                <div class="user-header-buttons">
+<button class="btn btn-danger btn-sm" onclick="userLogout()">
+    <i class="fas fa-sign-out-alt"></i><br>Logout
+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-container">
+            <div class="user-tabs">
+                <button class="user-tab-btn active" onclick="switchUserTab(event,'appSelection')">
+                    <i class="fas fa-mobile-alt"></i> Applications
+                </button>
+                <button class="user-tab-btn" onclick="switchUserTab(event,'myHistory')">
+                    <i class="fas fa-history"></i> My History
+                </button>
+            </div>
+
+            <div id="appSelectionTab" class="user-tab-content active">
+                <div class="section-card">
+                    <h3><i class="fas fa-mobile-alt"></i> Select Application</h3>
+                    <div id="userAppList" class="user-apps-grid"></div>
+                </div>
+
+                <div id="commentSection" style="display:none;" class="section-card">
+                    <h3><i class="fas fa-comments"></i> <span id="selectedAppName"></span></h3>
+
+                    <div class="quantity-selector">
+                        <label>How many comments do you need?</label>
+                        <div class="quantity-input-group">
+                            <input type="number" id="commentQuantity" class="form-control" min="1" placeholder="Enter number"/>
+                            <button type="button" class="btn btn-primary" onclick="loadComments()">
+                                <i class="fas fa-arrow-right"></i> Load
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="commentsDisplay" class="comments-container"></div>
+                </div>
+            </div>
+
+            <div id="myHistoryTab" class="user-tab-content" style="display:none;">
+                <div class="section-card">
+                    <h3><i class="fas fa-history"></i> My Copy History</h3>
+                    <div class="history-table-scroll">
+                        <div id="userHistoryList">
+                            <p style="text-align: center; color: var(--text-muted);">No copy history yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Modern, visually interesting footer -->
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-accent"></div>
+            <div class="footer-inner">
+                <p class="footer-copyright">&copy; 2025 All rights reserved</p>
+                <p class="footer-credit">Design and created by <span class="footer-highlight">(Ritik) Vartik Growth Agency</span></p>
+            </div>
+            <div class="footer-accent footer-accent-right"></div>
+        </div>
+    </footer>
+</body>
+</html>
